@@ -58,8 +58,8 @@ var reset = function () {
 	hero.y = canvas.height / 2;
 
 	// Throw the princess somewhere on the screen randomly
-	princess.x = 32 + (Math.random() * (canvas.width - 64));
-	princess.y = 32 + (Math.random() * (canvas.height - 64));
+	princess.x = 32 + (Math.random() * (canvas.width - 96));
+	princess.y = 32 + (Math.random() * (canvas.height - 96));
 };
 
 // Update game objects
