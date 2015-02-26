@@ -58,7 +58,7 @@ var reset = function () {
 	hero.y = canvas.height / 2;
 
 	// Throw the princess somewhere on the screen randomly
-	princess.x = 32 + (Math.random() * (canvas.width - 96));
+	princess.x = 32 + (Math.random() * (canvas.width - 96)); //ES -32 YA QUE LE TENEMOS QUE RESTAR EL ACNHO Y EL ALTO DEL ARBOL (32X32)
 	princess.y = 32 + (Math.random() * (canvas.height - 96));
 };
 
@@ -86,6 +86,17 @@ var update = function (modifier) {
 	) {
 		++princessesCaught;
 		reset();
+	}
+	
+	//Se sale del canvas?
+	if(hero.x > (canvas.width-32-32)){
+		hero.x = canvas.width-32-32;
+	}else if(hero.y > (canvas.height-32-32)){
+		hero.y = canvas.height-32-32;
+	}else if(hero.y < 32){
+		hero.y = 32;
+	}else if(hero.x < 32){
+		hero.x = 32;
 	}
 };
 
