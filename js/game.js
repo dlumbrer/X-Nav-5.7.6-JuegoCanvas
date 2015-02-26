@@ -34,12 +34,23 @@ princessImage.onload = function () {
 };
 princessImage.src = "images/princess.png";
 
+// stone image
+var stoneReady = false;
+var stoneImage = new Image();
+stoneImage.onload = function () {
+	stoneReady = true;
+};
+stoneImage.src = "images/stone.png";
+
 // Game objects
 var hero = {
 	speed: 256 // movement in pixels per second
 };
 var princess = {};
 var princessesCaught = 0;
+var stones = [];
+var stone = {};
+var numberOfStones = 5;
 
 // Handle keyboard controls
 var keysDown = {};
@@ -60,10 +71,30 @@ var reset = function () {
 	// Throw the princess somewhere on the screen randomly
 	princess.x = 32 + (Math.random() * (canvas.width - 96)); //ES -32 YA QUE LE TENEMOS QUE RESTAR EL ACNHO Y EL ALTO DEL ARBOL (32X32)
 	princess.y = 32 + (Math.random() * (canvas.height - 96));
+	
+	stones = []; //REINICIA LAS PIEDRAS
+	for(i = 0; i<numberOfStones; i++){
+		stone = {}
+		stone.x = 32 + (Math.random() * (canvas.width - 96));
+		stone.y = 32 + (Math.random() * (canvas.height - 96));
+		//PARA QUE NO COINCIDA CON EL CABALLERO NI CON LA PRINCESA
+		if(hero.x < (stone.x + 32) && stone.x < (hero.x + 32) && hero.y < (stone.y + 32) && stone.y < (hero.y + 32)
+		   || princess.x < (stone.x + 32) && stone.x < (princess.x + 32) && princess.y < (stone.y + 32) && stone.y < (princess.y + 32)){
+			stone.x = 32 + (Math.random() * (canvas.width - 96));
+			stone.y = 32 + (Math.random() * (canvas.height - 96));
+			i--;
+			continue;
+		}
+
+		stones.push(stone);
+	}
+	
+	
 };
 
 // Update game objects
 var update = function (modifier) {
+		
 	if (38 in keysDown) { // Player holding up
 		hero.y -= hero.speed * modifier;
 	}
@@ -98,6 +129,25 @@ var update = function (modifier) {
 	}else if(hero.x < 32){
 		hero.x = 32;
 	}
+
+	//Se toca con una piedra? Pues si se toca anulamos el movimiento
+	for(i=0;i<numberOfStones;i++){
+		if(hero.x < (stones[i].x + 32) && stones[i].x < (hero.x + 32) && hero.y < (stones[i].y + 32) && stones[i].y < (hero.y + 32)){
+			if (38 in keysDown) { // Player holding up
+				hero.y += hero.speed * modifier;
+			}
+			if (40 in keysDown) { // Player holding down
+				hero.y -= hero.speed * modifier;
+			}
+			if (37 in keysDown) { // Player holding left
+				hero.x += hero.speed * modifier;
+			}
+			if (39 in keysDown) { // Player holding right
+				hero.x -= hero.speed * modifier;
+			}	
+		}
+	}
+
 };
 
 // Draw everything
@@ -113,7 +163,14 @@ var render = function () {
 	if (princessReady) {
 		ctx.drawImage(princessImage, princess.x, princess.y);
 	}
-
+	//////////////////////PIEDRAS////////////////
+	if(stoneReady){
+		for(i=0;i<numberOfStones;i++){
+			ctx.drawImage(stoneImage, stones[i].x, stones[i].y);
+		}
+	}
+	////////////////////////////////////////////
+	
 	// Score
 	ctx.fillStyle = "rgb(250, 250, 250)";
 	ctx.font = "24px Helvetica";
