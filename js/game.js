@@ -177,6 +177,10 @@ var update = function (modifier) {
 			&& monsters[i].y <= (hero.y + 32)
 		) {
 			princessesCaught = 0;
+			numberOfMonsters = 1;
+			speedMonster = 20;
+			numberOfStones = 5;
+			nivel = 1;
 			reset();
 		}
 	}	
@@ -209,16 +213,16 @@ var update = function (modifier) {
 			}	
 		}
 	}
-	/*
+	
 	//niveles
 	if(princessesCaught == 5*nivel){
 		numberOfMonsters += 1;
 		speedMonster += 10;
-		numberOfStones += 2;
-		render();
+		numberOfStones += 5;
 		reset();
+		nivel += 1;
 	}
-	* */
+	
 };
 
 // Draw everything
@@ -256,6 +260,12 @@ var render = function () {
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
 	ctx.fillText("Princesses caught: " + princessesCaught, 32, 32);
+	//Level
+	ctx.fillStyle = "rgb(250, 250, 250)";
+	ctx.font = "24px Helvetica";
+	ctx.textAlign = "left";
+	ctx.textBaseline = "top";
+	ctx.fillText("Level: " + nivel, 380, 32);
 };
 
 // The main game loop
