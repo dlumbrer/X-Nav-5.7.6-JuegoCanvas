@@ -42,6 +42,14 @@ stoneImage.onload = function () {
 };
 stoneImage.src = "images/stone.png";
 
+// monster image
+var monsterReady = false;
+var monsterImage = new Image();
+monsterImage.onload = function () {
+	monsterReady = true;
+};
+monsterImage.src = "images/monster.png";
+
 // Game objects
 var hero = {
 	speed: 256 // movement in pixels per second
@@ -51,6 +59,11 @@ var princessesCaught = 0;
 var stones = [];
 var stone = {};
 var numberOfStones = 5;
+var monster = {};
+var monsters= [];
+var numberOfMonsters = 1;
+var speedMonster = 20;
+var nivel = 1;
 
 // Handle keyboard controls
 var keysDown = {};
@@ -89,11 +102,47 @@ var reset = function () {
 		stones.push(stone);
 	}
 	
+	monsters = []; //REINICIA LAS MONSTRUOS
+	for(i = 0; i<numberOfMonsters; i++){
+		monster = {speed: speedMonster};
+		monster.x = 32 + (Math.random() * (canvas.width - 96));
+		monster.y = 32 + (Math.random() * (canvas.height - 96));
+		//PARA QUE NO COINCIDA EL SPAWN CON EL CABALLERO NI CON LA PRINCESA
+		if(hero.x < (monster.x + 32) && monster.x < (hero.x + 32) && hero.y < (monster.y + 32) && monster.y < (hero.y + 32)
+		   || princess.x < (monster.x + 32) && monster.x < (princess.x + 32) && princess.y < (monster.y + 32) && monster.y < (princess.y + 32)){
+			monster.x = 32 + (Math.random() * (canvas.width - 96));
+			monster.y = 32 + (Math.random() * (canvas.height - 96));
+			i--;
+			continue;
+		}
+
+		monsters.push(monster);
+	}
+	
+	
 	
 };
 
 // Update game objects
 var update = function (modifier) {
+
+
+	//IA DE LOS MONSTRUOS
+	for(i=0; i<numberOfMonsters; i++){	
+		distx = monsters[i].x - hero.x;
+		disty = monsters[i].y - hero.y;
+		if(distx > 0){
+			monsters[i].x -= monsters[i].speed * modifier; 
+		}else if (distx < 0){
+			monsters[i].x += monsters[i].speed * modifier;
+		}
+		if(disty > 0){
+			monsters[i].y -= monsters[i].speed * modifier; 
+		}else if (disty < 0){
+			monsters[i].y += monsters[i].speed * modifier;
+		}
+	}
+	
 		
 	if (38 in keysDown) { // Player holding up
 		hero.y -= hero.speed * modifier;
@@ -118,6 +167,19 @@ var update = function (modifier) {
 		++princessesCaught;
 		reset();
 	}
+	
+	//Si te toca un monstruo pierdes
+	for(i=0; i<numberOfMonsters; i++){
+		if (
+			hero.x <= (monsters[i].x + 16)
+			&& monsters[i].x <= (hero.x + 16)
+			&& hero.y <= (monsters[i].y + 16)
+			&& monsters[i].y <= (hero.y + 32)
+		) {
+			princessesCaught = 0;
+			reset();
+		}
+	}	
 	
 	//Se sale del canvas?
 	if(hero.x > (canvas.width-32-32)){
@@ -147,7 +209,16 @@ var update = function (modifier) {
 			}	
 		}
 	}
-
+	/*
+	//niveles
+	if(princessesCaught == 5*nivel){
+		numberOfMonsters += 1;
+		speedMonster += 10;
+		numberOfStones += 2;
+		render();
+		reset();
+	}
+	* */
 };
 
 // Draw everything
@@ -167,6 +238,14 @@ var render = function () {
 	if(stoneReady){
 		for(i=0;i<numberOfStones;i++){
 			ctx.drawImage(stoneImage, stones[i].x, stones[i].y);
+		}
+	}
+	////////////////////////////////////////////
+	
+	//////////////////////Monstruos////////////////
+	if(monsterReady){
+		for(i=0;i<numberOfMonsters;i++){
+			ctx.drawImage(monsterImage, monsters[i].x, monsters[i].y);
 		}
 	}
 	////////////////////////////////////////////
